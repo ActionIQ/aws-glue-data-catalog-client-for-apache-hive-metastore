@@ -4,7 +4,6 @@ import com.amazonaws.glue.catalog.converters.BaseCatalogToHiveConverter;
 import com.amazonaws.glue.catalog.converters.CatalogToHiveConverter;
 import com.amazonaws.glue.catalog.metastore.AWSCatalogMetastoreClient;
 import com.amazonaws.glue.catalog.metastore.GlueClientFactory;
-import com.amazonaws.glue.catalog.util.AWSGlueConfig;
 import com.amazonaws.glue.catalog.util.GlueTestClientFactory;
 import com.amazonaws.services.glue.AWSGlue;
 import com.amazonaws.services.glue.model.DeleteDatabaseRequest;
@@ -40,11 +39,11 @@ import static org.mockito.Mockito.when;
 public class MetastoreClientDatabaseIntegrationTest {
 
   private AWSGlue glueClient;
-  protected IMetaStoreClient metastoreClient;
+  private IMetaStoreClient metastoreClient;
   private Warehouse wh;
   private Database hiveDB;
   private com.amazonaws.services.glue.model.Database catalogDB;
-  protected HiveConf conf;
+  private HiveConf conf;
   private Path tmpPath;
   private List<String> additionalDbForCleanup;
   private CatalogToHiveConverter catalogToHiveConverter = new BaseCatalogToHiveConverter();
@@ -75,7 +74,7 @@ public class MetastoreClientDatabaseIntegrationTest {
   public void clean() {
     try {
       glueClient.deleteDatabase(new DeleteDatabaseRequest().withName(hiveDB.getName()));
-      
+
       for (String db : additionalDbForCleanup) {
         glueClient.deleteDatabase(new DeleteDatabaseRequest().withName(db));
       }
@@ -164,4 +163,5 @@ public class MetastoreClientDatabaseIntegrationTest {
     }
     assertTrue("Unable to drop database", dropped);
   }
+
 }
