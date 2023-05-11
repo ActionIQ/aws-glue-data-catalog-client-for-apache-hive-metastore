@@ -74,7 +74,7 @@ public class MetastoreClientDatabaseIntegrationTest {
   public void clean() {
     try {
       glueClient.deleteDatabase(new DeleteDatabaseRequest().withName(hiveDB.getName()));
-      
+
       for (String db : additionalDbForCleanup) {
         glueClient.deleteDatabase(new DeleteDatabaseRequest().withName(db));
       }

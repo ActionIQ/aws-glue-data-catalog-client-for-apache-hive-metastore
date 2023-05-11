@@ -3,6 +3,7 @@ package com.amazonaws.glue.catalog.metastore;
 import com.amazonaws.glue.catalog.converters.BaseCatalogToHiveConverter;
 import com.amazonaws.glue.catalog.converters.CatalogToHiveConverter;
 import com.amazonaws.glue.catalog.converters.HiveToCatalogConverter;
+import com.amazonaws.glue.catalog.util.AWSGlueConfig;
 import com.amazonaws.glue.catalog.util.ExprBuilder;
 import com.amazonaws.glue.catalog.util.ExpressionHelper;
 import com.amazonaws.glue.catalog.util.TestObjects;
@@ -177,6 +178,18 @@ public class AWSCatalogMetastoreClientTest {
     verify(glueClient, times(1)).createDatabase(any(CreateDatabaseRequest.class));
     verify(wh, times(1)).getDefaultDatabasePath(DEFAULT_DATABASE_NAME);
     verify(wh, times(1)).isDir(defaultWhPath);
+  }
+
+  @Test
+  public void testNoDefaultNamespaceCreation() throws Exception {
+    doThrow(new EntityNotFoundException("")).when(glueClient).getDatabase(any(GetDatabaseRequest.class));
+
+    when(conf.getVar(conf, ConfVars.USERS_IN_ADMIN_ROLE, "")).thenReturn("");
+    when(conf.get(AWSGlueConfig.AWS_CHECK_DEFAULT_DATABASE)).thenReturn("false");
+    metastoreClient = new AWSCatalogMetastoreClient.Builder().withClientFactory(clientFactory)
+            .withMetastoreFactory(metastoreFactory).withWarehouse(wh).createDefaults(true).withHiveConf(conf).build();
+
+    verify(glueClient, times(0)).createDatabase(any(CreateDatabaseRequest.class));
   }
 
   @Test

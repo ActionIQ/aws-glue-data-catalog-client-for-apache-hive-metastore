@@ -3,6 +3,7 @@ package com.amazonaws.glue.catalog.metastore;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.glue.catalog.converters.BaseCatalogToHiveConverter;
 import com.amazonaws.glue.catalog.converters.CatalogToHiveConverter;
+import com.amazonaws.glue.catalog.util.AWSGlueConfig;
 import com.amazonaws.glue.catalog.util.BatchDeletePartitionsHelper;
 import com.amazonaws.glue.catalog.util.ExpressionHelper;
 import com.amazonaws.glue.catalog.util.LoggingHelper;
@@ -145,8 +146,10 @@ public class AWSCatalogMetastoreClient implements IMetaStoreClient {
     glueMetastoreClientDelegate = new GlueMetastoreClientDelegate(this.conf, glueMetastore, wh);
 
     snapshotActiveConf();
-    if (!doesDefaultDBExist()) {
-      createDefaultDatabase();
+    if (conf.getBoolean(AWSGlueConfig.AWS_CHECK_DEFAULT_DATABASE, true)) {
+      if (!doesDefaultDBExist()) {
+        createDefaultDatabase();
+      }
     }
     catalogId = MetastoreClientUtils.getCatalogId(conf);
   }
@@ -233,8 +236,10 @@ public class AWSCatalogMetastoreClient implements IMetaStoreClient {
      * metastore glueClient is instantiated. For now, simply copying the
      * functionality in the thrift server
      */
-    if(builder.createDefaults && !doesDefaultDBExist()) {
-      createDefaultDatabase();
+    if (conf.getBoolean(AWSGlueConfig.AWS_CHECK_DEFAULT_DATABASE, true)) {
+      if (builder.createDefaults && !doesDefaultDBExist()) {
+        createDefaultDatabase();
+      }
     }
   }
 
