@@ -165,17 +165,3 @@ public class MetastoreClientDatabaseIntegrationTest {
     assertTrue("Unable to drop database", dropped);
   }
 }
-
-public class AiqMetastoreClientDatabaseIntegrationTest extends MetastoreClientDatabaseIntegrationTest {
-  @Override
-  public void setup() throws MetaException {
-    super.setup();
-    conf.set(AWSGlueConfig.AWS_CHECK_DEFAULT_DATABASE, "false");
-  }
-
-  @Test(expected = NoSuchObjectException.class)
-  public void testNoDefaultDatabase() throws TException {
-    // default db should NOT exist
-    metastoreClient.getDatabase("default");
-  }
-}
